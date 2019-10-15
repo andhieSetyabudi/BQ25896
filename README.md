@@ -23,8 +23,8 @@ void loop()
   Serial.print("VBUS : "); Serial.println(battery_charging.getVBUS());
   Serial.print("VSYS : "); Serial.println(battery_charging.getVSYS());
   Serial.print("VBAT : "); Serial.println(battery_charging.getVBAT());
-  SerialUSB.print("ICHG : "); Serial.println(battery_charging.getICHG(),4);
-  SerialUSB.print("TSPCT : "); Serial.println(battery_charging.getTSPCT());
+  Serial.print("ICHG : "); Serial.println(battery_charging.getICHG(),4);
+  Serial.print("TSPCT : "); Serial.println(battery_charging.getTSPCT());
   Serial.print("Temperature : "); Serial.println(battery_charging.getTemperature());
   
   Serial.print("FS_Current Limit : "); Serial.println(battery_charging.getFast_Charge_Current_Limit());
