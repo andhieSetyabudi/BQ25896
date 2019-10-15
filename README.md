@@ -36,7 +36,7 @@ void loop()
                                                           (battery_charging.getCHG_STATUS()==BQ25896::CHG_STAT::PRE_CHARGE ?" pre charging":
                                                           (battery_charging.getCHG_STATUS()==BQ25896::CHG_STAT::FAST_CHARGE?" Fast charging":"charging done"))); 
   
-  SerialUSB.print("VBUS Status : "); Serial.println(battery_charging.getVBUS_STATUS()==BQ25896::VBUS_STAT::NO_INPUT?" not input":
+  Serial.print("VBUS Status : "); Serial.println(battery_charging.getVBUS_STATUS()==BQ25896::VBUS_STAT::NO_INPUT?" not input":
                                                           (battery_charging.getVBUS_STATUS()==BQ25896::VBUS_STAT::USB_HOST ?" USB host":
                                                           (battery_charging.getVBUS_STATUS()==BQ25896::VBUS_STAT::ADAPTER?" Adapter":"OTG")));
   
