@@ -195,24 +195,20 @@ namespace EmbeddedDevices
             // parsing CHG_STAT
                 if(((data) >> (4)) & 0x01)
                 {
-                    if(((data) >> (3)) & 0x01)
-                        CHG_STATUS = CHG_STAT::CHARGE_DONE;
-                    else
-                        CHG_STATUS = CHG_STAT::FAST_CHARGE;
+                    if(((data) >> (3)) & 0x01)  {CHG_STATUS = CHG_STAT::CHARGE_DONE;}
+                    else                        {CHG_STATUS = CHG_STAT::FAST_CHARGE;};
                 }
                 else
                 {
-                    if(((data) >> (3)) & 0x01)
-                        CHG_STATUS = CHG_STAT::PRE_CHARGE;
-                    else
-                        CHG_STATUS = CHG_STAT::NOT_CHARGING;
+                    if(((data) >> (3)) & 0x01) {CHG_STATUS = CHG_STAT::PRE_CHARGE;}
+                    else                       {CHG_STATUS = CHG_STAT::NOT_CHARGING;};
    
                 };
             // parsing VSYS_status
                 if(((data) >> (0)) & 0x01)
-                    VSYS_STAT_ = VSYS_STAT::IN_VSYSMIN;
+                    {VSYS_STAT_ = VSYS_STAT::IN_VSYSMIN;}
                 else
-                    VSYS_STAT_ = VSYS_STAT::NOT_IN_VSYS;
+                    {VSYS_STAT_ = VSYS_STAT::NOT_IN_VSYS;};
             }
 
             void takeFaultData(void)
@@ -222,29 +218,29 @@ namespace EmbeddedDevices
                 if(((data) >> (2)) & 0x01)      // hot or cold
                 {
                     if(((data) >> (1)) & 0x01)  // hot
-                        TS_RANK_ = TS_RANK::HOT;
+                        {TS_RANK_ = TS_RANK::HOT;}
                     else                        // cold
-                        TS_RANK_ = TS_RANK::COLD;
+                        {TS_RANK_ = TS_RANK::COLD;};
                 }
                 else                            // cool, warm or normal
                 {
                     if(((data) >> (1)) & 0x01)  // warm or cool
                     {
                         if(((data) >> (0)) & 0x01)  // cool
-                            TS_RANK_ = TS_RANK::COOL;
+                            {TS_RANK_ = TS_RANK::COOL;}
                         else                        // warm
-                            TS_RANK_ = TS_RANK::WARM;
+                            {TS_RANK_ = TS_RANK::WARM;};
                     }
                     else                        // normal
-                        TS_RANK_ = TS_RANK::NORMAL;
+                        {TS_RANK_ = TS_RANK::NORMAL;};
                 }
             // parsing charging  fault
                 if(((data) >> (5)) & 0x01)  // termal shutdown or timer expired
                 {
                     if(((data) >> (4)) & 0x01) 
-                        CHG_FAULT_ = CHG_FAULT::TIMER_EXPIRED;
+                        {CHG_FAULT_ = CHG_FAULT::TIMER_EXPIRED;}
                     else
-                        CHG_FAULT_ = CHG_FAULT::THERMAL_SHUTDOWN;
+                        {CHG_FAULT_ = CHG_FAULT::THERMAL_SHUTDOWN;};
                 }
                 else                        // normal or input fault
                 {
