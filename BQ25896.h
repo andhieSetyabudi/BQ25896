@@ -14,7 +14,7 @@ namespace EmbeddedDevices
 {
     
     template <int CELL>
-    class BQ25896 //: public TwoWire 
+    class BQ25896  
     {
         public :
             enum class TS_RANK
@@ -258,20 +258,7 @@ namespace EmbeddedDevices
             //DMA_HandleTypeDef s_DMAHandle;
 
         public:
-            BQ25896(TwoWire& w) : wire(&w)
-            {
-                // s_DMAHandle.Init.Direction = DMA_MEMORY_TO_MEMORY;
-                // s_DMAHandle.Init.PeriphInc = DMA_PINC_ENABLE;
-                // s_DMAHandle.Init.MemInc = DMA_MINC_ENABLE;
-                // s_DMAHandle.Init.Mode = DMA_NORMAL;
-                // s_DMAHandle.Init.Priority = DMA_PRIORITY_VERY_HIGH;
-            
-                // s_DMAHandle.Init.PeriphDataAlignment = DMA_PDATAALIGN_WORD;
-                // s_DMAHandle.Init.MemDataAlignment = DMA_MDATAALIGN_WORD;
-            
-               // s_DMAHandle.Init.FIFOMode = DMA_FIFOMODE_ENABLE;
-               // s_DMAHandle.Init.FIFOThreshold = DMA_FIFO_THRESHOLD_HALFFULL;
-            };
+            BQ25896(TwoWire& w) : wire(&w){};
             void begin(void) {setADC_enabled();}
             void properties(void)
             {
