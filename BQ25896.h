@@ -1,19 +1,20 @@
 #pragma once
-#ifndef bq25896_h
-#define bq25896_h
+#ifndef bq25896_h_
+#define bq25896_h_
 #include <Arduino.h>
 #include <Wire.h>
 #include <math.h>
 
 // #define bitRead(value, bit) (((value) >> (bit)) & 0x01)
-    //#define bitSet(value, bit) ((value) |= (1UL << (bit)))
-    //#define bitClear(value, bit) ((value) &= ~(1UL << (bit)))
-
+//#define bitSet(value, bit) ((value) |= (1UL << (bit)))
+//#define bitClear(value, bit) ((value) &= ~(1UL << (bit)))
+#define ENABLED         HIGH
+#define DISABLED        LOW
 namespace EmbeddedDevices
 {
     
     template <int CELL>
-    class BQ25896 : public TwoWire 
+    class BQ25896 //: public TwoWire 
     {
         public :
             enum class TS_RANK
@@ -138,6 +139,7 @@ namespace EmbeddedDevices
             { 
                 byte data = read(REG::ADC_CTRL);
                 data |= (1UL << (7));       // start A/D convertion
+                data |= (1UL << 6);         // set continuous convertion
                 write_(REG::ADC_CTRL, data); 
             }
             void takeVBUSData(void)
@@ -200,8 +202,10 @@ namespace EmbeddedDevices
                 }
                 else
                 {
-                    if(((data) >> (3)) & 0x01) {CHG_STATUS = CHG_STAT::PRE_CHARGE;}
-                    else                       {CHG_STATUS = CHG_STAT::NOT_CHARGING;};
+                    if(((data) >> (3)) & 0x01) 
+                        CHG_STATUS = CHG_STAT::PRE_CHARGE;
+                    else                       
+                        CHG_STATUS = CHG_STAT::NOT_CHARGING;
    
                 };
             // parsing VSYS_status
@@ -251,8 +255,23 @@ namespace EmbeddedDevices
                 }
             }
 
+            //DMA_HandleTypeDef s_DMAHandle;
+
         public:
-            BQ25896(TwoWire& w) : wire(&w){};
+            BQ25896(TwoWire& w) : wire(&w)
+            {
+                // s_DMAHandle.Init.Direction = DMA_MEMORY_TO_MEMORY;
+                // s_DMAHandle.Init.PeriphInc = DMA_PINC_ENABLE;
+                // s_DMAHandle.Init.MemInc = DMA_MINC_ENABLE;
+                // s_DMAHandle.Init.Mode = DMA_NORMAL;
+                // s_DMAHandle.Init.Priority = DMA_PRIORITY_VERY_HIGH;
+            
+                // s_DMAHandle.Init.PeriphDataAlignment = DMA_PDATAALIGN_WORD;
+                // s_DMAHandle.Init.MemDataAlignment = DMA_MDATAALIGN_WORD;
+            
+               // s_DMAHandle.Init.FIFOMode = DMA_FIFOMODE_ENABLE;
+               // s_DMAHandle.Init.FIFOThreshold = DMA_FIFO_THRESHOLD_HALFFULL;
+            };
             void begin(void) {setADC_enabled();}
             void properties(void)
             {
@@ -303,7 +322,7 @@ namespace EmbeddedDevices
 
             float getInput_Current_Limit(void)
             {
-                byte data = read(REG::ICHG);
+                byte data = read(REG::ILIM);
                 data &= ~(1UL << 7);
                 data &= ~(1UL << 6);
                 return (float) data * 0.05f;
@@ -330,13 +349,27 @@ namespace EmbeddedDevices
                 return (float)(data)*0.016f+3.840f;
             }
 
+            void setMinVBUS(float volt = 4.5f)
+            {
+                byte data = read(REG::VINDPM);
+                data &= 0b10000000;
+                if( volt > 2.6f )
+                {
+                    volt -=2.6;
+                    volt = volt * 10;
+                    byte temp_ = (byte)volt;
+                    data |= temp_;
+                }
+                write_(REG::VINDPM,data);
+            }
+
             void setFast_Charge_Current_Limit(float cur)
             {
                 cur = (cur > 3.008f)? 3.008f:((cur < 0 )? 0 : cur);
                 cur /= 8.128;
                 cur *= 127;
                 byte reg = read(REG::ICHG);
-                byte tmp = (((reg) >> (7)) & 0x01) | (byte) cur;
+                byte tmp = 128 | (byte) cur;
                 write_(REG::ICHG,tmp);
             }
             
@@ -384,6 +417,54 @@ namespace EmbeddedDevices
                 data &=0b00000011;
                 data |= (byte)cur<<2;
                 write_(REG::VREG,data);
+            }
+            void setBatLoad(uint8_t mode)
+            {
+                byte data = read(REG::SYS_CTRL);
+                if(mode == DISABLED)
+                {
+                    data &= ~(1UL << 7UL);
+                }
+                else
+                {
+                    data |= (1UL << 7UL);
+                }
+                data |= (1UL << 1UL);
+                data |= (1UL << 2UL);
+                data |= (1UL << 3UL);
+                
+                write_(REG::SYS_CTRL,data);
+            }
+            
+            void setChargeEnable(uint8_t mode)
+            {
+                byte data = read(REG::SYS_CTRL);
+                if(mode == DISABLED)
+                {
+                    data &= ~(1U << 4U);
+                }
+                else
+                {
+                    data |= (1U << 4U);
+                }
+                write_(REG::SYS_CTRL,data);
+            }
+            void setForceICO(uint8_t mode)
+            {
+                byte data = read(REG::CTRL1);
+                if(mode == DISABLED)
+                {
+                    data &= ~(1U << 7U);
+                    data &= ~(1U << 0U);
+                    data &= ~(1U << 1U);
+                }
+                else
+                {
+                    data |= (1U << 7U);
+                    data |= (1U << 0U);
+                    data |= (1U << 1U);
+                }
+                write_(REG::CTRL1,data);
             }
     };
 }
