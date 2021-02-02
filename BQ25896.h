@@ -65,7 +65,7 @@ namespace EmbeddedDevices
                   temperature = 1.f / temperature;
             return temperature - 273.25f;
         }
-        const uint8_t I2C_ADDR = 0x6B;
+        const uint8_t I2C_ADDR = 0x6A;
         enum class REG
         {
             ILIM        = 0x00,
